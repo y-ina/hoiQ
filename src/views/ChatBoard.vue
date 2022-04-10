@@ -1,5 +1,6 @@
 <template>
   <v-app id="inspire">
+    <Sidebar />
     <v-main>
       <v-container
         class="py-8 px-6"
@@ -70,65 +71,68 @@
 
 <script>
 import firebase from "@/firebase/firebase"
+import Sidebar from '@/components/layouts/Sidebar'
 
+export default {
+  components: {
+    Sidebar
+  },
+  async created() {
+    console.log('created');
+    this.user_id = this.$route.query.user_id;
+    console.log(this.user_id);
 
-  export default {
-    async created() {
-      console.log('created');
-      this.user_id = this.$route.query.user_id;
-      console.log(this.user_id);
+    const chatRef = firebase.firestore().collection("chats")
+    console.log('chatRef', chatRef);
+    const snapshot = await chatRef.get()
+    console.log('snapshot', snapshot);
 
-      const chatRef = firebase.firestore().collection("chats")
-      console.log('chatRef', chatRef);
-      const snapshot = await chatRef.get()
-      console.log('snapshot', snapshot);
-
-      snapshot.forEach(doc => {
-        console.log('data', doc.data());
-        this.messages.push(doc.data())
-      })
-    },
-    data: () => ({
-      messages: [
-        // {message: "message1"},
-        // {message: "message2"},
-        // {message: "message3"},
-        // {message: "message4"},
-        // {message: "message5"},
-      ],
-      body: '',
-      user_id: '',
-      cards: ['Today'],
-      drawer: null,
-      links: [
-        ['mdi-inbox-arrow-down', 'Inbox'],
-        ['mdi-send', 'Send'],
-        ['mdi-delete', 'Trash'],
-        ['mdi-alert-octagon', 'Spam'],
-      ],
-      // invalid: false,
-    }),
-    computed: {
-      // 改行でもfalseになるため修正が必要
-      invalid() {
-        if(!this.body) {
-          return true;
-        }
-        return false;
+    snapshot.forEach(doc => {
+      console.log('data', doc.data());
+      this.messages.push(doc.data())
+    })
+  },
+  data: () => ({
+    messages: [
+      // {message: "message1"},
+      // {message: "message2"},
+      // {message: "message3"},
+      // {message: "message4"},
+      // {message: "message5"},
+    ],
+    body: '',
+    user_id: '',
+    cards: ['Today'],
+    drawer: null,
+    links: [
+      ['mdi-inbox-arrow-down', 'Inbox'],
+      ['mdi-send', 'Send'],
+      ['mdi-delete', 'Trash'],
+      ['mdi-alert-octagon', 'Spam'],
+    ],
+    // invalid: false,
+  }),
+  computed: {
+    // 改行でもfalseになるため修正が必要
+    invalid() {
+      if(!this.body) {
+        return true;
       }
+      return false;
+    }
+  },
+  methods: {
+    clear() {
+      console.log('clear');
+      this.body = "";
     },
-    methods: {
-      clear() {
-        console.log('clear');
-        this.body = "";
-      },
-      submit() {
-        console.log('submit', this.body);
-        this.messages.unshift({message: this.body});
-        this.body = "";
-      }
+    submit() {
+      console.log('submit', this.body);
+      this.messages.unshift({message: this.body});
+      this.body = "";
     }
   }
+}
 </script>
 
 <style scoped>
