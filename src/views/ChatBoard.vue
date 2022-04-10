@@ -15,10 +15,10 @@
               <v-subheader>{{ card }}</v-subheader>
 
               <v-list two-line>
-                <template v-for="n in 6">
+                <template v-for="(data, index) in messages">
                   <v-list-item
 
-                    :key="n"
+                    :key="index"
                   >
                     <v-list-item-avatar color="grey darken-1">
                     </v-list-item-avatar>
@@ -27,14 +27,14 @@
                       <!-- <v-list-item-title>Message {{ n }}</v-list-item-title> -->
 
                       <v-list-item-subtitle class="message">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil repellendus distinctio similique
+                        {{ data.message }}
                       </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
 
                   <v-divider
                     v-if="n !== 6"
-                    :key="`divider-${n}`"
+                    :key="`divider-${index}`"
                     inset
                   ></v-divider>
                 </template>
@@ -45,12 +45,24 @@
       </v-container>
 
       <v-textarea
+          v-model="body"
           class="mx-2"
           label="メッセージを入力"
           rows="3"
           prepend-icon="mdi-comment"
           auto-grow
       ></v-textarea>
+
+      <v-btn @click="submit"
+        class="mr-4"
+        type="submit"
+        :disabled="invalid"
+      >
+        submit
+      </v-btn>
+      <v-btn @click="clear">
+        clear
+      </v-btn>
 
     </v-main>
   </v-app>
@@ -64,7 +76,15 @@
       console.log(this.user_id);
     },
     data: () => ({
-      user_id:'',
+      messages: [
+        {message: "message1"},
+        {message: "message2"},
+        {message: "message3"},
+        {message: "message4"},
+        {message: "message5"},
+      ],
+      body: '',
+      user_id: '',
       cards: ['Today'],
       drawer: null,
       links: [
@@ -73,7 +93,28 @@
         ['mdi-delete', 'Trash'],
         ['mdi-alert-octagon', 'Spam'],
       ],
+      // invalid: false,
     }),
+    computed: {
+      // 改行でもfalseになるため修正が必要
+      invalid() {
+        if(!this.body) {
+          return true;
+        }
+        return false;
+      }
+    },
+    methods: {
+      clear() {
+        console.log('clear');
+        this.body = "";
+      },
+      submit() {
+        console.log('submit', this.body);
+        this.messages.unshift({message: this.body});
+        this.body = "";
+      }
+    }
   }
 </script>
 
