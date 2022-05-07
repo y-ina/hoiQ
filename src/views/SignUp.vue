@@ -1,15 +1,22 @@
 <template>
   <v-app>
-    <div class="login-box">
-      <v-card class="login-form">
-        <v-card-title class="login-title">ログイン</v-card-title>
+    <div class="signup-box">
+      <v-card class="signup-form">
+        <v-card-title class="signup-title">新規登録</v-card-title>
         <v-card-subtitle>ユーザー情報をご入力ください</v-card-subtitle>
-        <v-btn text color="light-blue" to="signup">新規登録はこちら</v-btn>
+        <v-btn text color="light-blue" to="login">ログインはこちら</v-btn>
         <v-form
           ref="form"
           v-model="valid"
           lazy-validation
         >
+
+          <v-text-field
+            v-model="name"
+            :rules="nameRules"
+            label="名前"
+            required
+          ></v-text-field>
 
           <v-text-field
             v-model="email"
@@ -29,10 +36,10 @@
 
           <v-btn
           color="success"
-          class="login-btn"
+          class="signup-btn"
           :disabled="isValid"
           >
-            ログイン
+            新規登録
           </v-btn>
 
           <v-btn>
@@ -48,6 +55,11 @@
   export default {
     data: () => ({
       valid: true,
+      name: '',
+      nameRules: [
+        v => !!v || '名前を入力してください。',
+        v => (v && v.length <= 10) || '名前は10文字以内で入力してください。',
+      ],
       email: '',
       emailRules: [
         v => !!v || 'メールアドレスを入力してください。',
@@ -81,19 +93,19 @@
 </script>
 
 <style scoped>
-.login-box{
+.signup-box{
   width: 50%;
   margin: 0px auto;
   padding: 30px;
 }
-.login-form {
+.signup-form {
   margin: 150px;
   padding: 30px;
 }
-.login-title{
+.signup-title{
   display: inline-block;
 }
-.login-btn{
+.signup-btn{
   margin-right: 20px;
 }
 </style>
