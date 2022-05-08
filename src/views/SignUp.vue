@@ -46,6 +46,17 @@
           <v-btn>
             クリア
           </v-btn>
+
+          <v-alert
+            dense
+            outlined
+            type="error"
+            class="error-message"
+            v-if="errorMessage"
+          >
+          {{ errorMessage }}
+          </v-alert>
+
         </v-form>
       </v-card>
     </div>
@@ -73,6 +84,7 @@
         v => !!v || 'パスワードを入力してください。',
         v => (v && v.length >= 6) || 'パスワードは6文字以上で作成してください。',
       ],
+      errorMessage: "",
     }),
 
     computed: {
@@ -103,9 +115,14 @@
             {displayName: this.name}
           );
           console.log("UpdateUser", result.user);
+          // 成功時TOP画面にリダイレクト
+          this.$router.push('/login')
         })
         .catch((error) => {
           console.log("fail", error)
+          // 失敗時エラーメッセージを表示
+          this.errorMessage = "ユーザーの新規作成に失敗しました。";
+          
         })
       }
     },
@@ -128,4 +145,5 @@
 .signup-btn{
   margin-right: 20px;
 }
+
 </style>
