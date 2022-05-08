@@ -37,6 +37,7 @@
           <v-btn
           color="success"
           class="signup-btn"
+          @click="signup"
           :disabled="isValid"
           >
             新規登録
@@ -52,6 +53,8 @@
 </template>
 
 <script>
+  import firebase from "@/firebase/firebase"
+
   export default {
     data: () => ({
       valid: true,
@@ -68,6 +71,7 @@
       password:'',
       passwordRules: [
         v => !!v || 'パスワードを入力してください。',
+        v => (v && v.length >= 6) || 'パスワードは6文字以上で作成してください。',
       ],
     }),
 
@@ -88,6 +92,22 @@
       resetValidation () {
         this.$refs.form.resetValidation()
       },
+      signup (){
+        // 新規登録処理
+        console.log("signupcall")
+        firebase.auth()
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then(async (result) => {
+          console.log("success", result);
+          await result.user.updateProfile(
+            {displayName: this.name}
+          );
+          console.log("UpdateUser", result.user);
+        })
+        .catch((error) => {
+          console.log("fail", error)
+        })
+      }
     },
   }
 </script>
