@@ -116,7 +116,7 @@
           );
           console.log("UpdateUser", result.user);
           localStorage.message = "新規登録に成功しました。"
-          // 成功時TOP画面にリダイレクト
+          // 成功時ログイン画面にリダイレクト
           this.$router.push('/login')
         })
         .catch((error) => {
