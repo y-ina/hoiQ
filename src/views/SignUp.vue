@@ -115,6 +115,7 @@
             {displayName: this.name}
           );
           console.log("UpdateUser", result.user);
+          localStorage.message = "新規登録に成功しました。"
           // 成功時TOP画面にリダイレクト
           this.$router.push('/login')
         })
@@ -139,11 +140,14 @@
   margin: 150px;
   padding: 30px;
 }
-.signup-title{
+.signup-title {
   display: inline-block;
 }
-.signup-btn{
+.signup-btn {
   margin-right: 20px;
 }
 
+.error-message {
+  margin-top: 20px;
+}
 </style>
