@@ -115,6 +115,16 @@ import firebase from "@/firebase/firebase"
           .then((result) => {
             console.log("成功")
             console.log("ゆーざー", result.user)
+
+            //ユーザー情報をセッションに保存
+            const auth = {
+              displayName: result.user.displayName,
+              email: result.user.email,
+              uid: result.user.uid,
+              refreshToken: result.user.refreshToken
+            }
+            sessionStorage.setItem('user', JSON.stringify(auth))
+
             //ログインに成功時TOPページにリダイレクト
             this.$router.push('/')
 
