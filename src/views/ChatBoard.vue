@@ -2,6 +2,7 @@
   <v-app id="inspire">
     <Sidebar />
     <v-main>
+      <h1>{{ room? room.name : "" }}</h1>
       <v-container
         class="py-8 px-6"
         fluid
@@ -78,19 +79,30 @@ export default {
     Sidebar
   },
   async created() {
-    console.log('created');
-    this.user_id = this.$route.query.user_id;
-    console.log(this.user_id);
+    this.roomId = this.$route.query.room_id;
+    console.log("room_id", this.roomId);
 
-    const chatRef = firebase.firestore().collection("chats")
-    console.log('chatRef', chatRef);
-    const snapshot = await chatRef.get()
-    console.log('snapshot', snapshot);
+    const roomRef = firebase.firestore().collection("rooms").doc(this.roomId)
+    const roomDoc = await roomRef.get()
+    if(!roomDoc.exists) {
+      await this.$router.push('/')
+    }
+    this.room = roomDoc.data()
 
+    const snapshot = await roomRef.collection('messages').get()
     snapshot.forEach(doc => {
-      console.log('data', doc.data());
+      console.log('data', doc.data())
       this.messages.push(doc.data())
     })
+    
+    
+    // const snapshot = await chatRef.get()
+    // console.log('snapshot', snapshot);
+
+    // snapshot.forEach(doc => {
+    //   console.log('data', doc.data());
+    //   this.messages.push(doc.data())
+    // })
   },
   data: () => ({
     messages: [
@@ -101,7 +113,8 @@ export default {
       // {message: "message5"},
     ],
     body: '',
-    user_id: '',
+    room_id: '',
+    room: null,
     cards: ['Today'],
     drawer: null,
     links: [
