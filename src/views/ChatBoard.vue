@@ -23,6 +23,7 @@
                     :key="index"
                   >
                     <v-list-item-avatar color="grey darken-1">
+                      <v-img :src="data.photoURL"></v-img>
                     </v-list-item-avatar>
 
                     <v-list-item-content>
@@ -89,11 +90,11 @@ export default {
     }
     this.room = roomDoc.data()
 
-    const snapshot = await roomRef.collection('messages').get()
-    snapshot.forEach(doc => {
-      console.log('data', doc.data())
-      this.messages.push(doc.data())
-    })
+    // const snapshot = await roomRef.collection('messages').orderBy("createdAt", "asc").get()
+    // snapshot.forEach(doc => {
+    //   console.log('data', doc.data())
+    //   this.messages.push(doc.data())
+    // })
     
     
     // const snapshot = await chatRef.get()
@@ -103,6 +104,17 @@ export default {
     //   console.log('data', doc.data());
     //   this.messages.push(doc.data())
     // })
+  },
+  mounted() {
+    this.auth = JSON.parse(sessionStorage.getItem('user'))
+
+    const roomRef = firebase.firestore().collection('rooms').doc(this.roomId)
+    roomRef.collection('messages').orderBy('createdAt', 'asc')
+    .onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        this.messages.push(change.doc.data())
+      })
+    })
   },
   data: () => ({
     messages: [
@@ -123,6 +135,7 @@ export default {
       ['mdi-delete', 'Trash'],
       ['mdi-alert-octagon', 'Spam'],
     ],
+    auth: null,
     // invalid: false,
   }),
   computed: {
@@ -140,9 +153,28 @@ export default {
       this.body = "";
     },
     submit() {
-      console.log('submit', this.body);
-      this.messages.unshift({message: this.body});
-      this.body = "";
+      // this.messages.push({
+      //   message: this.body,
+      //   name: this.auth.displayName,
+      //   photoURL: this.auth.photoURL,
+      //   createdAt: firebase.firestore.Timestamp.now()
+      // });
+
+      const roomRef =firebase.firestore().collection("rooms").doc(this.roomId)
+      roomRef.collection("messages").add({
+        message: this.body,
+        name: this.auth.displayName,
+        photoURL: this.auth.photoURL,
+        createdAt: firebase.firestore.Timestamp.now()
+      })
+      .then(result => {
+        console.log('success', result)
+        this.body = "";
+      })
+      .catch(error => {
+        console.log('fail', error)
+        alert('メッセージの送信に失敗しました。')
+      })
     }
   }
 }
